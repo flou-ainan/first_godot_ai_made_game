@@ -6,7 +6,7 @@ extends Area2D
 signal destroyed(points: int)
 
 const HIT_FLASH_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
-const BASE_COLOR: Color = Color(0.95, 0.2, 0.2, 1.0)
+const BASE_COLOR: Color = Color(0.65, 0.2, 0.95, 1.0)
 
 @export_group("Enemy Configuration")
 @export var enemy_size: float = 64.0
