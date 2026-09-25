@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Play Current Scene (Godot)",
+      "type": "godot",
+      "request": "launch",
+      "project": "${workspaceFolder}",
+      "port": 6006,
+      "address": "127.0.0.1",
+      "launch_scene": true
+    },
+    {
+      "name": "Play Main Scene (Godot)",
+      "type": "godot",
+      "request": "launch",
+      "project": "${workspaceFolder}",
+      "port": 6006,
+      "address": "127.0.0.1",
+      "launch_game": true
+    }
+  ]
+}
