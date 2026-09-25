@@ -8,17 +8,23 @@ signal destroyed(points: int)
 const HIT_FLASH_COLOR: Color = Color(1.0, 1.0, 1.0, 1.0)
 const BASE_COLOR: Color = Color(0.95, 0.2, 0.2, 1.0)
 
+@export_group("Enemy Configuration")
+@export var enemy_size: float = 64.0
 @export var speed: float = 120.0
-@export var hits_to_destroy: int = 3
+@export var min_hits: int = 3
+@export var max_hits: int = 5
 
+var hits_to_destroy: int = 3
 var _current_hits: int = 0
 
 @onready var _visual: ColorRect = %Visual
+@onready var _collision_shape: CollisionShape2D = %CollisionShape2D
 
 func _ready() -> void:
-	hits_to_destroy = randi_range(3, 5)
+	hits_to_destroy = randi_range(min_hits, max_hits)
 	area_entered.connect(_on_area_entered)
 	body_entered.connect(_on_body_entered)
+	_apply_size()
 
 func _physics_process(delta: float) -> void:
 	position.y += speed * delta
@@ -31,6 +37,17 @@ func take_damage(amount: int = 1) -> void:
 	if _current_hits >= hits_to_destroy:
 		destroyed.emit(5)
 		queue_free()
+
+func _apply_size() -> void:
+	var half: float = enemy_size / 2.0
+	if _visual:
+		_visual.offset_left = -half
+		_visual.offset_top = -half
+		_visual.offset_right = half
+		_visual.offset_bottom = half
+	if _collision_shape and _collision_shape.shape is RectangleShape2D:
+		var rect := _collision_shape.shape as RectangleShape2D
+		rect.size = Vector2(enemy_size, enemy_size)
 
 func _play_hit_feedback() -> void:
 	if not _visual:

@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://enemy.gd" id="1_enemy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy"]
-size = Vector2(32, 32)
+size = Vector2(64, 64)
 
 [node name="Enemy" type="Area2D" groups=["enemy"]]
 collision_layer = 4
@@ -12,11 +12,12 @@ script = ExtResource("1_enemy")
 
 [node name="Visual" type="ColorRect" parent="."]
 unique_name_in_owner = true
-offset_left = -16.0
-offset_top = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
 color = Color(0.95, 0.2, 0.2, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
 shape = SubResource("RectangleShape2D_enemy")

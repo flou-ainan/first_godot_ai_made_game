@@ -6,10 +6,14 @@ extends Node2D
 const BulletScene: PackedScene = preload("res://bullet.tscn")
 const EnemyScene: PackedScene = preload("res://enemy.tscn")
 
-@export_group("Player Settings")
-@export var player_speed: float = 420.0
-@export var player_acceleration: float = 1400.0
-@export var player_friction: float = 900.0
+@export_group("Player Physics & Inertia")
+@export var player_speed: float = 450.0
+@export var player_acceleration: float = 4500.0
+@export var player_friction: float = 3800.0
+
+@export_group("Enemy Spawning")
+@export var enemy_spawn_interval: float = 2.0
+@export var enemy_initial_delay: float = 5.0
 
 var _player_velocity: Vector2 = Vector2.ZERO
 var _shots_fired: int = 0
@@ -31,7 +35,7 @@ var _half_player_size: Vector2 = Vector2(16.0, 16.0)
 
 func _ready() -> void:
 	_update_hud()
-	get_tree().create_timer(5.0).timeout.connect(_start_enemy_spawning)
+	get_tree().create_timer(enemy_initial_delay).timeout.connect(_start_enemy_spawning)
 
 func _physics_process(delta: float) -> void:
 	_handle_movement(delta)
@@ -89,7 +93,7 @@ func _start_enemy_spawning() -> void:
 		return
 	_spawn_enemy()
 	if _enemy_spawn_timer:
-		_enemy_spawn_timer.wait_time = 2.0
+		_enemy_spawn_timer.wait_time = enemy_spawn_interval
 		_enemy_spawn_timer.one_shot = false
 		if not _enemy_spawn_timer.timeout.is_connected(_on_enemy_spawn_timer_timeout):
 			_enemy_spawn_timer.timeout.connect(_on_enemy_spawn_timer_timeout)
@@ -107,7 +111,7 @@ func _spawn_enemy() -> void:
 	if not enemy:
 		return
 	
-	enemy.position = Vector2(randf_range(50.0, 1230.0), -30.0)
+	enemy.position = Vector2(randf_range(60.0, 1220.0), -40.0)
 	if enemy.has_signal(&"destroyed"):
 		enemy.connect(&"destroyed", _on_enemy_destroyed)
 	_enemies_container.add_child(enemy)
