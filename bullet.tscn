@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="Script" path="res://src/bullet/bullet.gd" id="1_bullet"]
+[ext_resource type="Script" path="res://bullet.gd" id="1_bullet"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(6, 16)
@@ -11,22 +11,11 @@ collision_mask = 0
 script = ExtResource("1_bullet")
 
 [node name="Visual" type="ColorRect" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
 offset_left = -3.0
 offset_top = -8.0
 offset_right = 3.0
 offset_bottom = 8.0
-grow_horizontal = 2
-grow_vertical = 2
 color = Color(0.2, 0.95, 1, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_1")
-
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
-unique_name_in_owner = true
-rect = Rect2(-3, -8, 6, 16)
