@@ -54,8 +54,8 @@ unique_name_in_owner = true
 
 [node name="EnemySpawnTimer" type="Timer" parent="."]
 unique_name_in_owner = true
-wait_time = 1.6
-autostart = true
+wait_time = 2.0
+one_shot = false
 
 [node name="HUD" type="CanvasLayer" parent="."]
 

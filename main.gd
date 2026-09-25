@@ -30,9 +30,8 @@ var _half_player_size: Vector2 = Vector2(16.0, 16.0)
 @onready var _shots_label: Label = %ShotsLabel
 
 func _ready() -> void:
-	if _enemy_spawn_timer:
-		_enemy_spawn_timer.timeout.connect(_on_enemy_spawn_timer_timeout)
 	_update_hud()
+	get_tree().create_timer(5.0).timeout.connect(_start_enemy_spawning)
 
 func _physics_process(delta: float) -> void:
 	_handle_movement(delta)
@@ -85,7 +84,21 @@ func _shoot() -> void:
 	_shots_fired += 1
 	_update_hud()
 
+func _start_enemy_spawning() -> void:
+	if not is_inside_tree():
+		return
+	_spawn_enemy()
+	if _enemy_spawn_timer:
+		_enemy_spawn_timer.wait_time = 2.0
+		_enemy_spawn_timer.one_shot = false
+		if not _enemy_spawn_timer.timeout.is_connected(_on_enemy_spawn_timer_timeout):
+			_enemy_spawn_timer.timeout.connect(_on_enemy_spawn_timer_timeout)
+		_enemy_spawn_timer.start()
+
 func _on_enemy_spawn_timer_timeout() -> void:
+	_spawn_enemy()
+
+func _spawn_enemy() -> void:
 	if not EnemyScene or not _enemies_container:
 		return
 	
@@ -94,7 +107,7 @@ func _on_enemy_spawn_timer_timeout() -> void:
 	if not enemy:
 		return
 	
-	enemy.position = Vector2(randf_range(40.0, 1240.0), -30.0)
+	enemy.position = Vector2(randf_range(50.0, 1230.0), -30.0)
 	if enemy.has_signal(&"destroyed"):
 		enemy.connect(&"destroyed", _on_enemy_destroyed)
 	_enemies_container.add_child(enemy)
