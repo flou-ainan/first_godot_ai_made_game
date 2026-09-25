@@ -13,13 +13,14 @@ offset_right = 1280.0
 offset_bottom = 720.0
 color = Color(0, 0, 0, 1)
 
-[node name="Player" type="CharacterBody2D" parent="."]
+[node name="Player" type="CharacterBody2D" parent="." groups=["player"]]
 unique_name_in_owner = true
 position = Vector2(640, 560)
 collision_layer = 1
 collision_mask = 0
 
 [node name="PlayerVisual" type="ColorRect" parent="Player"]
+unique_name_in_owner = true
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -48,6 +49,14 @@ one_shot = true
 [node name="BulletsContainer" type="Node2D" parent="."]
 unique_name_in_owner = true
 
+[node name="EnemiesContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="EnemySpawnTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 1.6
+autostart = true
+
 [node name="HUD" type="CanvasLayer" parent="."]
 
 [node name="TopMargin" type="MarginContainer" parent="HUD"]
@@ -61,16 +70,33 @@ theme_override_constants/margin_right = 24
 
 [node name="HBox" type="HBoxContainer" parent="HUD/TopMargin"]
 layout_mode = 2
+theme_override_constants/separation = 16
 
-[node name="TitleLabel" type="Label" parent="HUD/TopMargin/HBox"]
+[node name="HealthTitle" type="Label" parent="HUD/TopMargin/HBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_color = Color(0.3, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 18
-text = "2D SPACE SHOOTER"
+text = "HP:"
+
+[node name="HealthBar" type="ProgressBar" parent="HUD/TopMargin/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 20)
+layout_mode = 2
+size_flags_vertical = 4
+step = 1.0
+value = 100.0
+show_percentage = false
 
 [node name="Spacer" type="Control" parent="HUD/TopMargin/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="ScoreLabel" type="Label" parent="HUD/TopMargin/HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 18
+text = "Score: 0"
 
 [node name="ShotsLabel" type="Label" parent="HUD/TopMargin/HBox"]
 unique_name_in_owner = true

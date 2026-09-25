@@ -4,6 +4,7 @@ extends Node2D
 ## Main scene controlling the 2D topdown space shooter prototype.
 
 const BulletScene: PackedScene = preload("res://bullet.tscn")
+const EnemyScene: PackedScene = preload("res://enemy.tscn")
 
 @export_group("Player Settings")
 @export var player_speed: float = 420.0
@@ -12,20 +13,40 @@ const BulletScene: PackedScene = preload("res://bullet.tscn")
 
 var _player_velocity: Vector2 = Vector2.ZERO
 var _shots_fired: int = 0
+var _score: int = 0
+var _max_player_health: float = 100.0
+var _player_health: float = 100.0
 var _half_player_size: Vector2 = Vector2(16.0, 16.0)
 
 @onready var _player: CharacterBody2D = %Player
+@onready var _player_visual: ColorRect = %PlayerVisual
 @onready var _muzzle: Marker2D = %Muzzle
 @onready var _shoot_timer: Timer = %ShootTimer
 @onready var _bullets_container: Node2D = %BulletsContainer
+@onready var _enemies_container: Node2D = %EnemiesContainer
+@onready var _enemy_spawn_timer: Timer = %EnemySpawnTimer
+@onready var _health_bar: ProgressBar = %HealthBar
+@onready var _score_label: Label = %ScoreLabel
 @onready var _shots_label: Label = %ShotsLabel
 
 func _ready() -> void:
+	if _enemy_spawn_timer:
+		_enemy_spawn_timer.timeout.connect(_on_enemy_spawn_timer_timeout)
 	_update_hud()
 
 func _physics_process(delta: float) -> void:
 	_handle_movement(delta)
 	_handle_shooting()
+
+func damage_player(percentage: float = 20.0) -> void:
+	_player_health -= _max_player_health * (percentage / 100.0)
+	_play_player_damage_feedback()
+	if _player_health <= 0.0:
+		_player_health = 0.0
+		_update_hud()
+		get_tree().reload_current_scene()
+		return
+	_update_hud()
 
 func _handle_movement(delta: float) -> void:
 	var input_vector: Vector2 = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
@@ -64,6 +85,35 @@ func _shoot() -> void:
 	_shots_fired += 1
 	_update_hud()
 
+func _on_enemy_spawn_timer_timeout() -> void:
+	if not EnemyScene or not _enemies_container:
+		return
+	
+	var enemy_instance: Node = EnemyScene.instantiate()
+	var enemy := enemy_instance as Area2D
+	if not enemy:
+		return
+	
+	enemy.position = Vector2(randf_range(40.0, 1240.0), -30.0)
+	if enemy.has_signal(&"destroyed"):
+		enemy.connect(&"destroyed", _on_enemy_destroyed)
+	_enemies_container.add_child(enemy)
+
+func _on_enemy_destroyed(points: int) -> void:
+	_score += points
+	_update_hud()
+
+func _play_player_damage_feedback() -> void:
+	if not _player_visual:
+		return
+	_player_visual.color = Color(1.0, 0.2, 0.2, 1.0)
+	var tween := create_tween()
+	tween.tween_property(_player_visual, "color", Color(1.0, 1.0, 1.0, 1.0), 0.12)
+
 func _update_hud() -> void:
+	if _health_bar:
+		_health_bar.value = _player_health
+	if _score_label:
+		_score_label.text = "Score: %d" % _score
 	if _shots_label:
 		_shots_label.text = "Shots: %d" % _shots_fired
